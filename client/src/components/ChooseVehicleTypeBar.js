@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "../Css/ChooseVehicleTypeBar.css"; // Use for additional styling
 import { Dropdown, DropdownButton, DropdownItem } from "react-bootstrap";
+import { CHANGE_CATEGORY } from "../slices/CategorySlice.js"; // Adjust the import path based on your file structure
 
 const ChooseVehicleTypeBar = () => {
-  const [selectedOption, setSelectedOption] = useState("Bikes"); // Track selected main option
-  const [selectedSubOption, setSelectedSubOption] = useState("All"); // Track selected sub-option
+  const dispatch = useDispatch();
+  const { category, subcategory } = useSelector((state) => state.category); // Access Redux state
 
   const options = {
     Bikes: ["All", "Mountain Bike", "Road Bike", "Hybrid Bike"],
@@ -14,15 +16,13 @@ const ChooseVehicleTypeBar = () => {
   };
 
   const handleSelect = (mainOption, subOption) => {
-    // Check if the selected subOption is part of the mainOption's options
+    // Ensure selected sub-option is valid for the main option
     if (!options[mainOption].includes(subOption)) {
-      subOption = "All"; 
-      console.log("This is triggered");
+      subOption = "All";
     }
-  
-    // Set the main option and the sub-option when one is selected
-    setSelectedOption(mainOption);
-    setSelectedSubOption(subOption);
+
+    // Dispatch the action to update category and subcategory in Redux
+    dispatch(CHANGE_CATEGORY({ category: mainOption, subcategory: subOption }));
   };
 
   return (
@@ -31,21 +31,21 @@ const ChooseVehicleTypeBar = () => {
         <Dropdown key={option} className="position-relative">
           {/* Main Option Button */}
           <DropdownButton
-            variant={selectedOption === option ? "primary" : "secondary"} // Highlight the selected option
+            variant={category === option ? "primary" : "secondary"} // Highlight the selected option
             id={`${option}-dropdown`}
-            title={selectedOption === option ? `${option} (${selectedSubOption})` : option}
-            onSelect={(subOption) => handleSelect(option, subOption)} // Set the sub-option when selected
+            title={category === option ? `${option} (${subcategory})` : option}
+            onSelect={(subOption) => handleSelect(option, subOption)} // Update category and subcategory
             style={{
               minWidth: "150px",
               cursor: "pointer",
-              fontWeight: selectedOption === option ? "bold" : "normal", // Bold the selected option
+              fontWeight: category === option ? "bold" : "normal", // Bold the selected option
             }}
           >
             {/* Dropdown Items */}
             {options[option].map((subOption) => (
               <Dropdown.Item
                 key={subOption}
-                active={subOption === selectedSubOption} // Highlight selected sub-option
+                active={subcategory === subOption} // Highlight selected sub-option
                 eventKey={subOption}
                 style={{
                   transition: "background-color 0.2s ease",

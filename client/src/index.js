@@ -4,13 +4,25 @@ import './index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import { configureStore } from '@reduxjs/toolkit';
+import categorySlice from "./slices/CategorySlice.js";
+import { Provider } from 'react-redux';
+
 // Create the root element using React 18's createRoot API
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const store = configureStore({
+  reducer: {
+    category: categorySlice
+  }
+})
 
 // Render the App component
 root.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 

@@ -1,35 +1,49 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
+import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import ChooseVehicleTypeBar from '../components/ChooseVehicleTypeBar';
 import VehicleList from '../components/VehicleCard';
 
 const Home = () => {
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const cars = [
-    {
-      id: 1,
-      name: 'Tesla Model 3',
-      image: 'https://images.pexels.com/photos/170811/pexels-photo-170811.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      description: 'An electric car with incredible performance and range.',
-      price: 39999,
-    },
-    {
-      id: 2,
-      name: 'Ford Mustang',
-      image: 'https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      description: 'A powerful muscle car with classic American styling.',
-      price: 55999,
-    },
-    // Add more cars as needed
-  ];
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/v1/get/vehicles');
+        console.log(response);
+        if (!response.ok) {
+          console.log(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        setVehicles(data.vehicles);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
+
+  if (loading) {
+    return <div>Loading vehicles...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
-        <Navbar />
-        <ChooseVehicleTypeBar /> 
-        <VehicleList vehicles={cars} />
+      <Navbar />
+      <ChooseVehicleTypeBar />
+      <VehicleList vehicles={vehicles} />
     </div>
-  )
-}
+  );
+};
 
 export default Home;
