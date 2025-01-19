@@ -1,5 +1,6 @@
 import express from "express";
-import vehicleRoutes from "./routers/vehicle.router.js";
+import vehicleRoutes from "./routes/vehicle.route.js";
+import userRoutes from "./routes/user.routes.js";
 
 // It should be declared at the start then it works for entire project
 // It is used to load environment variables from a specific configuration file
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 // Routes used
 app.use("/api/v1" , vehicleRoutes );
+app.use("/api/v1" , userRoutes);
 
 // It  is used to start a server that listens on port mentioned in confuguration file
 
