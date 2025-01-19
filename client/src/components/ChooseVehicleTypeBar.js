@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import "../Css/ChooseVehicleTypeBar.css"; // Use for additional styling
-import { Dropdown, DropdownButton, DropdownItem } from "react-bootstrap";
-import { CHANGE_CATEGORY } from "../slices/CategorySlice.js"; // Adjust the import path based on your file structure
+import "../Css/ChooseVehicleTypeBar.css"; // Add your custom CSS if needed
+import {
+  Box,
+  Button,
+  Menu,
+  MenuItem,
+  Typography,
+  Grid,
+  Paper,
+} from "@mui/material";
+import { ArrowDropDown } from "@mui/icons-material";
+import { CHANGE_CATEGORY } from "../slices/CategorySlice.js"; // Adjust the import path
 
 const ChooseVehicleTypeBar = () => {
   const dispatch = useDispatch();
-  const { category, subcategory } = useSelector((state) => state.category); // Access Redux state
+  const { category, subcategory } = useSelector((state) => state.category);
 
   const options = {
     Bikes: ["All", "Mountain Bike", "Road Bike", "Hybrid Bike"],
@@ -15,49 +24,91 @@ const ChooseVehicleTypeBar = () => {
     Trucks: ["All", "Pickup Truck", "Semi Truck"],
   };
 
-  const handleSelect = (mainOption, subOption) => {
-    // Ensure selected sub-option is valid for the main option
-    if (!options[mainOption].includes(subOption)) {
-      subOption = "All";
-    }
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [selectedCategory, setSelectedCategory] = React.useState(null);
 
-    // Dispatch the action to update category and subcategory in Redux
-    dispatch(CHANGE_CATEGORY({ category: mainOption, subcategory: subOption }));
+  const handleMenuOpen = (event, option) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedCategory(option);
+  };
+
+  const handleMenuClose = (subOption) => {
+    if (subOption && selectedCategory) {
+      dispatch(
+        CHANGE_CATEGORY({ category: selectedCategory, subcategory: subOption })
+      );
+    }
+    setAnchorEl(null);
+    setSelectedCategory(null);
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center py-3 bg-light shadow-sm">
-      {Object.keys(options).map((option) => (
-        <Dropdown key={option} className="position-relative">
-          {/* Main Option Button */}
-          <DropdownButton
-            variant={category === option ? "primary" : "secondary"} // Highlight the selected option
-            id={`${option}-dropdown`}
-            title={category === option ? `${option} (${subcategory})` : option}
-            onSelect={(subOption) => handleSelect(option, subOption)} // Update category and subcategory
-            style={{
-              minWidth: "150px",
-              cursor: "pointer",
-              fontWeight: category === option ? "bold" : "normal", // Bold the selected option
-            }}
-          >
-            {/* Dropdown Items */}
-            {options[option].map((subOption) => (
-              <Dropdown.Item
-                key={subOption}
-                active={subcategory === subOption} // Highlight selected sub-option
-                eventKey={subOption}
-                style={{
-                  transition: "background-color 0.2s ease",
-                }}
-              >
-                {subOption}
-              </Dropdown.Item>
-            ))}
-          </DropdownButton>
-        </Dropdown>
-      ))}
-    </div>
+    <Paper
+      elevation={3}
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        py: 2,
+        px: 3,
+        bgcolor: "background.paper",
+        borderRadius: 2,
+      }}
+    >
+      <Grid container spacing={2} justifyContent="center">
+        {Object.keys(options).map((option) => (
+          <Grid item key={option}>
+            <Button
+              variant={category === option ? "contained" : "outlined"}
+              color={category === option ? "primary" : "inherit"}
+              endIcon={<ArrowDropDown />}
+              onClick={(event) => handleMenuOpen(event, option)}
+              sx={{
+                minWidth: 150,
+                textTransform: "capitalize",
+                fontWeight: category === option ? "bold" : "normal",
+                "&:hover": {
+                  bgcolor: category === option ? "primary.dark" : "grey.300",
+                },
+              }}
+            >
+              {category === option ? `${option} (${subcategory})` : option}
+            </Button>
+            <Menu
+              anchorEl={anchorEl}
+              open={selectedCategory === option}
+              onClose={() => handleMenuClose()}
+              PaperProps={{
+                style: {
+                  maxHeight: 200,
+                  width: "20ch",
+                },
+              }}
+            >
+              {options[option].map((subOption) => (
+                <MenuItem
+                  key={subOption}
+                  selected={subcategory === subOption}
+                  onClick={() => handleMenuClose(subOption)}
+                  sx={{
+                    "&.Mui-selected": {
+                      bgcolor: "primary.light",
+                      color: "white",
+                    },
+                    "&:hover": {
+                      bgcolor: "primary.main",
+                      color: "white",
+                    },
+                  }}
+                >
+                  {subOption}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Grid>
+        ))}
+      </Grid>
+    </Paper>
   );
 };
 

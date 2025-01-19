@@ -1,77 +1,98 @@
-import React from 'react';
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
+import {
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Grid,
+  Box,
+} from "@mui/material";
 
 const VehicleCard = ({ vehicle }) => {
   return (
-    <div className="card" style={styles.card}>
-      <img src={vehicle.image} alt={vehicle.name} className="card-img-top" style={styles.image} />
-      <div className="card-body">
-        <h5 className="card-title" style={styles.name}>{vehicle.name}</h5>
-        <p className="card-text" style={styles.description}>{vehicle.description}</p>
-        <p className="card-text" style={styles.price}>₹{vehicle.price}</p>
-      </div>
-    </div>
+    <Card
+      sx={{
+        borderRadius: 2,
+        boxShadow: 3,
+        display: "flex",
+        flexDirection: "column",
+        height: { xs: 250, sm: 280, md: 300 }, // Consistent height based on screen size
+        width: "100%",
+      }}
+    >
+      <CardMedia
+        component="img"
+        image={vehicle.image}
+        alt={vehicle.name}
+        sx={{
+          height: "60%", // Proportionate height for the image
+          objectFit: "cover",
+        }}
+      />
+      <CardContent sx={{ padding: 1.5 }}>
+        <Typography variant="subtitle1" gutterBottom noWrap>
+          {vehicle.name}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{
+            fontSize: "0.875rem",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {vehicle.description}
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          color="primary"
+          sx={{ fontWeight: "bold", marginTop: 1 }}
+        >
+          ₹{vehicle.price}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 };
 
 const VehicleList = ({ vehicles }) => {
-  // Access category and subcategory from the Redux store
   const { category, subcategory } = useSelector((state) => state.category);
 
   // Filter vehicles based on category and subcategory
   const filteredVehicles = vehicles.filter((vehicle) => {
-    // Check if the vehicle matches the selected category and subcategory
     const categoryMatch = category ? vehicle.category === category : true;
     const subcategoryMatch =
       subcategory && subcategory !== "All" ? vehicle.subcategory === subcategory : true;
-
     return categoryMatch && subcategoryMatch;
   });
 
   return (
-    <div className="row row-cols-1 row-cols-md-3 g-4" style={styles.container}>
-      {filteredVehicles.length > 0 ? (
-        filteredVehicles.map((vehicle) => (
-          <div className="col" key={vehicle._id}>
-            <VehicleCard vehicle={vehicle} />
-          </div>
-        ))
-      ) : (
-        <p style={{ textAlign: 'center', margin: '20px' }}>
-          No vehicles found for the selected category and subcategory.
-        </p>
-      )}
-    </div>
+    <Box sx={{ marginTop: 3, padding: 2 }}>
+      <Grid container spacing={2}>
+        {filteredVehicles.length > 0 ? (
+          filteredVehicles.map((vehicle) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={vehicle._id}>
+              <VehicleCard vehicle={vehicle} />
+            </Grid>
+          ))
+        ) : (
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            align="center"
+            sx={{ width: "100%", marginTop: 3 }}
+          >
+            No vehicles found for the selected category and subcategory.
+          </Typography>
+        )}
+      </Grid>
+    </Box>
   );
-};
-
-
-const styles = {
-  container: {
-    marginTop: '20px',
-  },
-  card: {
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-  },
-  image: {
-    height: '200px',
-    objectFit: 'cover',
-    borderRadius: '8px',
-  },
-  name: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  description: {
-    fontSize: '14px',
-    color: '#555',
-  },
-  price: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    color: '#00b300',
-  },
 };
 
 export default VehicleList;

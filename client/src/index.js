@@ -3,11 +3,25 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { CssBaseline } from '@mui/material'
 
 import { configureStore } from '@reduxjs/toolkit';
 import categorySlice from "./slices/CategorySlice.js";
 import { Provider } from 'react-redux';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+const theme = createTheme({
+  // You can customize the theme here if needed
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
+    },
+  },
+});
 // Create the root element using React 18's createRoot API
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -21,7 +35,10 @@ const store = configureStore({
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>,
     </Provider>
   </React.StrictMode>
 );
