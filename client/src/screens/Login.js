@@ -84,9 +84,15 @@ const Login = () => {
         setToastMessage('Login successful!');
         setSeverity('success');
         setShowToast(true);
-        const { authToken } = response.authToken;
+        const authToken  = response.authToken;
 
-        AuthToken.setToken(authToken);
+        console.log("This is " , authToken);
+
+        localStorage.setItem("authToken", authToken);
+        localStorage.setItem("email", email);
+
+        console.log("token " , localStorage.getItem("authToken"));
+
         // Redirect to the home page after a successful login
         setTimeout(() => navigate("/"), 200);
       } else {

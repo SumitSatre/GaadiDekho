@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import SignUpPage from './screens/Signup';
+import AboutPage from './screens/About';
+import DashboardPage from './Dashboard/Dashboard';
+import ProtectedRouteAdmin from './Dashboard/ProtectedRouteAdmin.js';
 
 const App = () => {
   return (
@@ -12,6 +15,12 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/about" element={<AboutPage />} />
+
+        <Route path="/dashboard" element={<ProtectedRouteAdmin />}>
+          <Route index element={<DashboardPage />} />
+        </Route>
+
       </Routes>
     </BrowserRouter>
   );

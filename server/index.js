@@ -16,14 +16,20 @@ app.use(express.json());    // It is used to parse incoming requests with JSON p
 
 // It is middleware whch allows the specified server to access the backend server 
 app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
+    res.setHeader("Access-Control-Allow-Origin", "*"); // You can replace '*' with your frontend URL for production
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"); // Allow necessary methods
+  
+    // Allow CORS preflight request (OPTIONS) to proceed
+    if (req.method === "OPTIONS") {
+      return res.status(200).end();
+    }
+  
     next();
-});
-
+  });
 
 
 // Routed Imported 

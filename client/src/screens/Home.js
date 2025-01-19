@@ -22,16 +22,12 @@ const Home = () => {
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false);
+       setLoading(false);
       }
     };
 
     fetchVehicles();
   }, []);
-
-  if (loading) {
-    return <div>Loading vehicles...</div>;
-  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -41,7 +37,7 @@ const Home = () => {
     <div>
       <Navbar />
       <ChooseVehicleTypeBar />
-      <VehicleList vehicles={vehicles} />
+      <VehicleList vehicles={vehicles} loading={loading} />
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
   Grid,
   Box,
 } from "@mui/material";
+import LoadingSpinner from "./LoadingSpinner";
 
 const VehicleCard = ({ vehicle }) => {
   return (
@@ -60,7 +61,8 @@ const VehicleCard = ({ vehicle }) => {
   );
 };
 
-const VehicleList = ({ vehicles }) => {
+const VehicleList = ({ vehicles , loading }) => {
+
   const { category, subcategory } = useSelector((state) => state.category);
 
   // Filter vehicles based on category and subcategory
@@ -71,6 +73,11 @@ const VehicleList = ({ vehicles }) => {
     return categoryMatch && subcategoryMatch;
   });
 
+
+  if (loading) {
+    return <LoadingSpinner />; // Use the loading spinner component
+  }
+  
   return (
     <Box sx={{ marginTop: 3, padding: 2 }}>
       <Grid container spacing={2}>

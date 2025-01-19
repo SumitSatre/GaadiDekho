@@ -43,8 +43,9 @@ const loginUserController =
             // Auth Token using json web token (jwt) --> created and passed to frontend 
 
             const data = {
-                user: {
-                    id: userData._id
+                userDetails: {
+                    "id": userData._id,
+                    "email" : email
                 }
             }
 

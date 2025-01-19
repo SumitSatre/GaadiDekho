@@ -2,11 +2,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import "../Css/ChooseVehicleTypeBar.css"; // Add your custom CSS if needed
 import {
-  Box,
   Button,
   Menu,
   MenuItem,
-  Typography,
   Grid,
   Paper,
 } from "@mui/material";
