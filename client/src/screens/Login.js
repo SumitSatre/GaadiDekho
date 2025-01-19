@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
   TextField,
   Typography,
-  Container,
   Grid,
   Paper,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import ToastMessage from "../components/ToastMessage"; // Assuming you have a ToastMessage component
+import { validateEmail, validatePassword } from "../helper/helper.functions.js";
+import AuthToken from "../helper/AuthToken.js";
 
 const BackgroundContainer = styled(Box)({
   backgroundImage: 'url("https://source.unsplash.com/random/1600x900?technology")',
@@ -39,16 +41,65 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [severity, setSeverity] = useState('success'); // 'success' or 'error'
 
-  const navigate = useNavigate(); 
+  const handleSubmit = async (event) => {
+    try {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const email = data.get("email");
+      const password = data.get("password");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const email = data.get("email");
-    const password = data.get("password");
-    console.log("Email:", email);
-    console.log("Password:", password);
+      if (!validateEmail(email)) {
+        setToastMessage("Email is not valid!");
+        setSeverity("error");
+        setShowToast(true);
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        setToastMessage("Password is not valid!");
+        setSeverity("error");
+        setShowToast(true);
+        return;
+      }
+
+      const userData = { email, password };
+
+      const res = await fetch('http://localhost:5000/api/v1/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const response = await res.json();
+      console.log(response);
+
+      if (response.success) {
+        setToastMessage('Login successful!');
+        setSeverity('success');
+        setShowToast(true);
+        const { authToken } = response.authToken;
+
+        AuthToken.setToken(authToken);
+        // Redirect to the home page after a successful login
+        setTimeout(() => navigate("/"), 200);
+      } else {
+        setToastMessage(response.message || 'Login failed!');
+        setSeverity('error');
+        setShowToast(true);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setToastMessage('Something went wrong');
+      setSeverity('error');
+      setShowToast(true);
+    }
   };
 
   return (
@@ -124,12 +175,19 @@ const Login = () => {
               color: "primary.main",
               textDecoration: "underline",
             }}
-            onClick = {() => navigate("/signup")}
+            onClick={() => navigate("/signup")}
           >
             Create Account
           </Typography>
         </Grid>
       </LoginPaper>
+
+      <ToastMessage
+        message={toastMessage}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        severity={severity}  // Pass severity for success or error
+      />
     </BackgroundContainer>
   );
 };

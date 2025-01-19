@@ -12,10 +12,17 @@ const loginUserController =
     async (req, res) => {
         const { email, password } = req.body;
 
-        if (!email || !password || !validateEmail(email) || !validatePassword(password)) {
-            return res.json({ success: false, status: 400, message: "Data is not correct!!" });
+        if (!email || !password) {
+            return res.json({ success: false, status: 400, message: "Please provide required data!!" });
         }
 
+        if(!validateEmail(email)){
+            return res.json({ success: false, status: 400, message: "Please provide valid email!!" });
+        }
+
+        if(!validatePassword(password)){
+            return res.json({ success: false, status: 400, message: "Please provide valid password!!" });
+        }
 
         // console.log(req.body);
 

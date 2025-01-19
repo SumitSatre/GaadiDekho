@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import { validateEmail, validatePassword } from "../helper/helper.functions.js";
+import ToastMessage from "../components/ToastMessage.js"; // Import ToastMessage component
 
 const BackgroundContainer = styled(Box)({
   backgroundImage: 'url("https://source.unsplash.com/random/1600x900?workspace")',
@@ -42,24 +44,76 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [severity, setSeverity] = useState('success');  // 'success' or 'error'
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const name = data.get("name");
-    const email = data.get("email");
-    const password = data.get("password");
-    const confirmPassword = data.get("confirmPassword");
+  const handleSubmit = async (event) => {
+    try {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const name = data.get("name");
+      const email = data.get("email");
+      const password = data.get("password");
+      const confirmPassword = data.get("confirmPassword");
 
-    // Add password confirmation check
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
+      // Add password confirmation check
+      if (password !== confirmPassword) {
+        setToastMessage("Passwords do not match");
+        setSeverity("error");
+        setShowToast(true);
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        setToastMessage("Email is not valid!");
+        setSeverity("error");
+        setShowToast(true);
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        setToastMessage("Password is not valid!");
+        setSeverity("error");
+        setShowToast(true);
+        return;
+      }
+
+      console.log("Name:", name);
+      console.log("Email:", email);
+      console.log("Password:", password);
+
+      const userData = {
+        "name": name,
+        "email": email,
+        "password": password,
+      };
+
+      const res = await fetch('http://localhost:5000/api/v1/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const response = await res.json();
+      console.log(response);
+
+      if (response.success) {
+        setToastMessage('Sign up successful!');
+        setSeverity('success');
+        setShowToast(true);
+        setTimeout(() => navigate("/login"), 2000); // Redirect after 2 seconds
+      } else {
+        setToastMessage(response.message || 'Signup failed!');
+        setSeverity('error');
+        setShowToast(true);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert("Something went wrong");
     }
-
-    console.log("Name:", name);
-    console.log("Email:", email);
-    console.log("Password:", password);
   };
 
   return (
@@ -153,6 +207,14 @@ const SignUpPage = () => {
           </Typography>
         </Grid>
       </SignUpPaper>
+
+      {/* Toast message will appear here */}
+      <ToastMessage
+        message={toastMessage}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        severity={severity} // Pass severity for success or error
+      />
     </BackgroundContainer>
   );
 };
