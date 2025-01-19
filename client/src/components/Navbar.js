@@ -68,10 +68,6 @@ const Navbar = () => {
     navigate("/about");
   };
 
-  const handleContactClick = () => {
-    navigate("/contact");
-  };
-
   const handleDashboardClick = () => {
     navigate("/dashboard"); 
   };
@@ -142,7 +138,6 @@ const Navbar = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
               <Button sx={{ color: 'white', textTransform: 'none' }} onClick={handleHomeClick}>Home</Button>
               <Button sx={{ color: 'white', textTransform: 'none' }} onClick={handleAboutClick}>About</Button>
-              <Button sx={{ color: 'white', textTransform: 'none' }} onClick={handleContactClick}>Contact</Button>
 
               {/* Conditionally show the Dashboard button */}
               {UserAdminStatus && (
@@ -222,9 +217,6 @@ const Navbar = () => {
               </ListItem>
               <ListItem button onClick={() => toggleDrawer(false)}>
                 <ListItemText primary="About" onClick={handleAboutClick} />
-              </ListItem>
-              <ListItem button onClick={() => toggleDrawer(false)}>
-                <ListItemText primary="Contact" onClick={handleContactClick} />
               </ListItem>
               {/* Conditionally show the Dashboard button */}
               {UserAdminStatus && (
