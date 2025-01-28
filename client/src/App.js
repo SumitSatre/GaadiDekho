@@ -7,6 +7,7 @@ import SignUpPage from './screens/Signup';
 import AboutPage from './screens/About';
 import DashboardPage from './Dashboard/Dashboard';
 import ProtectedRouteAdmin from './Dashboard/ProtectedRouteAdmin.js';
+import VehicleInfoPage from './components/VehicleInfoPage.js';
 
 const App = () => {
   return (
@@ -20,6 +21,8 @@ const App = () => {
         <Route path="/dashboard" element={<ProtectedRouteAdmin />}>
           <Route index element={<DashboardPage />} />
         </Route>
+
+        <Route path="/vehicleinfo/:id" element={<VehicleInfoPage />} />
 
       </Routes>
     </BrowserRouter>

@@ -9,8 +9,17 @@ import {
   Box,
 } from "@mui/material";
 import LoadingSpinner from "./LoadingSpinner";
+import { useNavigate } from 'react-router-dom';
 
 const VehicleCard = ({ vehicle }) => {
+
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/vehicleinfo/${vehicle._id}`, { state: { vehicle } });
+  };
+
+
   return (
     <Card
       sx={{
@@ -21,6 +30,7 @@ const VehicleCard = ({ vehicle }) => {
         height: { xs: 250, sm: 280, md: 300 }, // Consistent height based on screen size
         width: "100%",
       }}
+      onClick={handleCardClick}
     >
       <CardMedia
         component="img"
@@ -70,6 +80,7 @@ const VehicleList = ({ vehicles , loading }) => {
     const categoryMatch = category ? vehicle.category === category : true;
     const subcategoryMatch =
       subcategory && subcategory !== "All" ? vehicle.subcategory === subcategory : true;
+
     return categoryMatch && subcategoryMatch;
   });
 
@@ -79,7 +90,7 @@ const VehicleList = ({ vehicles , loading }) => {
   }
   
   return (
-    <Box sx={{ marginTop: 3, padding: 2 }}>
+    <Box sx={{ marginTop: 3, padding: 2 }} >
       <Grid container spacing={2}>
         {filteredVehicles.length > 0 ? (
           filteredVehicles.map((vehicle) => (
