@@ -43,7 +43,7 @@ const VehicleInfoPage = () => {
       const res = await response.json();
       const newReview = res.newReview;
 
-      // console.log("this is new review : " , newReview);
+      console.log("this is new review : " , newReview);
 
       // Update state with new review
       setReviews((prevReviews) => [...prevReviews, newReview]);
@@ -230,8 +230,8 @@ const VehicleInfoPage = () => {
                   Reviews
                 </Typography>
                 <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-                  {reviews.map((review) => (
-                    <Grid item xs={12} sm={6} md={4} key={review._id}>
+                  {reviews.map((review, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={review?._id ?? `review-${index}`}>
                       <Card
                         sx={{
                           padding: '12px',
@@ -242,13 +242,13 @@ const VehicleInfoPage = () => {
                       >
                         <CardContent sx={{ padding: '12px' }}>
                           <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333' }}>
-                            {review.userName + "  " + `${review.rating}⭐`}
+                          {(review?.userName ?? "Unknown") + " " + `${review?.rating ?? 0}⭐`}
                           </Typography>
                           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', marginBottom: '6px' }}>
-                            {new Date(review.createdAt).toLocaleDateString()}
+                          {new Date(review?.createdAt ?? new Date()).toLocaleDateString()}
                           </Typography>
                           <Typography variant="body2" sx={{ color: '#555', fontStyle: 'italic' }}>
-                            "{review.comment}"
+                            "{review?.comment ?? ""}"
                           </Typography>
                         </CardContent>
                       </Card>
