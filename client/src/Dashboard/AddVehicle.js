@@ -6,9 +6,16 @@ const AddVehicle = () => {
     name: '',
     image: '',
     description: '',
-    price: '',
+    priceMin: '',
+    priceMax: '',
     category: '',
-    subcategory: ''
+    subcategory: '',
+    engineCapacity: '',
+    mileage: '',
+    transmission: '',
+    kerbWeight: '',
+    fuelTankCapacity: '',
+    seatHeight: ''
   });
 
   const [error, setError] = useState('');
@@ -34,9 +41,15 @@ const AddVehicle = () => {
     setError('');
 
     // Validate required fields
-    const { name, image, description, price, category, subcategory } = vehicle;
-    if (!name || !image || !description || !price || !category || !subcategory) {
+    const { name, image, description, priceMin, priceMax, category, subcategory } = vehicle;
+    if (!name || !image || !description || !priceMin || !priceMax || !category || !subcategory) {
       setError('All fields are required.');
+      return;
+    }
+
+    // Validate price range
+    if (parseFloat(priceMax) < parseFloat(priceMin)) {
+      setError('Maximum price must be greater than or equal to minimum price.');
       return;
     }
 
@@ -57,9 +70,16 @@ const AddVehicle = () => {
           name: '',
           image: '',
           description: '',
-          price: '',
+          priceMin: '',
+          priceMax: '',
           category: '',
-          subcategory: ''
+          subcategory: '',
+          engineCapacity: '',
+          mileage: '',
+          transmission: '',
+          kerbWeight: '',
+          fuelTankCapacity: '',
+          seatHeight: ''
         });
       } else {
         const errorData = await response.json();
@@ -113,19 +133,33 @@ const AddVehicle = () => {
             />
           </Grid>
 
+          {/* Price Range */}
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Price"
-              name="price"
+              label="Minimum Price"
+              name="priceMin"
               type="number"
-              value={vehicle.price}
+              value={vehicle.priceMin}
               onChange={handleInputChange}
               required
+              inputProps={{ min: 0 }} // Ensure priceMin is not negative
             />
           </Grid>
 
-          {/* Category Selection */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Maximum Price"
+              name="priceMax"
+              type="number"
+              value={vehicle.priceMax}
+              onChange={handleInputChange}
+              required
+              inputProps={{ min: vehicle.priceMin }} // Ensure priceMax >= priceMin
+            />
+          </Grid>
+
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth required>
               <InputLabel>Category</InputLabel>
@@ -161,6 +195,79 @@ const AddVehicle = () => {
                   ))}
               </Select>
             </FormControl>
+          </Grid>
+
+          {/* Other fields remain unchanged */}
+          {/* New Fields */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Engine Capacity (cc)"
+              name="engineCapacity"
+              type="number"
+              value={vehicle.engineCapacity}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Mileage (km/l)"
+              name="mileage"
+              type="number"
+              value={vehicle.mileage}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Transmission"
+              name="transmission"
+              value={vehicle.transmission}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Kerb Weight (kg)"
+              name="kerbWeight"
+              type="number"
+              value={vehicle.kerbWeight}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Fuel Tank Capacity (liters)"
+              name="fuelTankCapacity"
+              type="number"
+              value={vehicle.fuelTankCapacity}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Seat Height (mm)"
+              name="seatHeight"
+              type="number"
+              value={vehicle.seatHeight}
+              onChange={handleInputChange}
+              required
+            />
           </Grid>
 
           <Grid item xs={12}>

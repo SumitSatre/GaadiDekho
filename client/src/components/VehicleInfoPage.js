@@ -1,11 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Container, Button, Box, Typography, Grid, Dialog, Card, CardContent } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import { Container, Typography, Button, Paper, Grow } from '@mui/material';
 import Navbar from './Navbar';
+import ReviewModal from './ReviewModal.js';
+import AuthToken from '../helper/AuthToken';
 
 const VehicleInfoPage = () => {
   const location = useLocation();
   const vehicle = location.state?.vehicle; // Retrieve the vehicle from location.state
+  const [reviewOpen, setReviewOpen] = useState(false);
+
+  const [reviews, setReviews] = useState(vehicle.reviews || []); // Ensure it's an array to avoid errors
+
+  const token = AuthToken.getToken();
+
+  const handleSubmitReview = async (reviewData) => {
+    try {
+      console.log("This is review Data : ", reviewData);
+
+      if (!reviewData.rating || !reviewData.message.trim()) {
+        console.error("Rating or comment is empty!");
+        alert("Rating or comment is empty!");
+        return;
+      }
+
+      const reviewBody = {
+        "rating" : reviewData.rating,
+        "comment" : reviewData.message
+      }
+
+      // console.log(`http://localhost:5000/api/v1/add/review/${vehicle._id}`);
+
+      const response = await fetch(`http://localhost:5000/api/v1/add/review/${vehicle._id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(reviewBody),
+      });
+
+      const res = await response.json();
+      const newReview = res.newReview;
+
+      // console.log("this is new review : " , newReview);
+
+      // Update state with new review
+      setReviews((prevReviews) => [...prevReviews, newReview]);
+
+      // Close the modal after successful submission
+      setReviewOpen(false);
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
+  };
+
 
   // Check if the vehicle is available
   if (!vehicle) {
@@ -29,89 +78,190 @@ const VehicleInfoPage = () => {
   return (
     <>
       <Navbar />
-      <Container
-        maxWidth="md"
+      <Box
         sx={{
           minHeight: '100vh',
-          padding: '40px 20px',
           backgroundColor: '#f4f6f8',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          paddingTop: '80px', // Add padding to account for the Navbar
         }}
       >
-        <Grow in={true} timeout={1000}>
-          <Paper
-            elevation={6}
-            sx={{
-              width: '100%',
-              borderRadius: '12px',
-              overflow: 'hidden',
-              backgroundColor: '#ffffff',
-              boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-            }}
-          >
-            {/* Vehicle Image */}
-            <img
-              src={vehicle.image}
-              alt={vehicle.name}
-              style={{
-                width: '100%',
-                height: 'auto',
-                maxHeight: '500px',
-                objectFit: 'cover',
-                transition: 'transform 0.3s ease-in-out',
-                '&:hover': {
-                  transform: 'scale(1.05)',
-                },
+        {/* Hero Section */}
+        <Box
+          sx={{
+            width: '100%',
+            height: '60vh',
+            backgroundImage: `url(${vehicle.image})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            display: 'flex',
+            alignItems: 'flex-end',
+            justifyContent: 'center',
+            padding: '40px',
+            textAlign: 'center',
+            color: '#ffffff',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Dark overlay for better text visibility
+            backgroundBlendMode: 'multiply',
+          }}
+        >
+          <Box>
+            <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
+              {vehicle.name}
+            </Typography>
+            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+              Price Range: ₹{vehicle.priceMin.toLocaleString()} - ₹{vehicle.priceMax.toLocaleString()}
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Main Content */}
+        <Container maxWidth="lg" sx={{ padding: '40px 20px' }}>
+          {/* Description Section */}
+          <Box sx={{ marginBottom: '40px' }}>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
+              Description
+            </Typography>
+            <Typography variant="body1" sx={{ fontSize: '1.1rem', lineHeight: 1.6 }}>
+              {vehicle.description}
+            </Typography>
+          </Box>
+
+          {/* Additional Details Section */}
+          <Box sx={{ marginBottom: '40px' }}>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '24px' }}>
+              Specifications
+            </Typography>
+            <Grid container spacing={4}>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Category
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.category}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Subcategory
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.subcategory}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Engine Capacity
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.engineCapacity} cc
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Mileage
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.mileage} km/l
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Transmission
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.transmission}
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Kerb Weight
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.kerbWeight} kg
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Fuel Tank Capacity
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.fuelTankCapacity} liters
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
+                  Seat Height
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {vehicle.seatHeight} mm
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+
+          {/* Review Button */}
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <Button
+              variant="outlined"
+              size="medium"
+              sx={{
+                textTransform: 'none',
+                fontSize: '1rem',
+                fontWeight: 'medium',
+                borderRadius: '6px',
               }}
-            />
+              onClick={() => setReviewOpen(true)}
+            >
+              Write a Review
+            </Button>
+          </Box>
 
-            {/* Vehicle Details */}
-            <div style={{ padding: '32px', maxHeight: 'calc(100vh - 500px)' }}>
-              <Typography variant="h3" gutterBottom style={{ fontWeight: 'bold', color: '#333333' }}>
-                {vehicle.name}
-              </Typography>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                paragraph
-                style={{ fontSize: '1.1rem', lineHeight: 1.6, wordBreak: 'break-word' }}
-              >
-                {vehicle.description}
-              </Typography>
-              <Typography variant="h4" color="primary" style={{ fontWeight: 'bold', marginTop: '16px' }}>
-                ₹{vehicle.price.toLocaleString()}
-              </Typography>
-            </div>
 
-            {/* Contact Button */}
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '24px' }}>
-              <Button
-                variant="contained"
-                color="primary"
-                size="large"
-                style={{
-                  padding: '12px 48px',
-                  fontSize: '1.1rem',
-                  fontWeight: 'bold',
-                  borderRadius: '8px',
-                  boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
-                  transition: 'all 0.3s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.3)',
-                  },
-                }}
-                onClick={() => alert('Interested in the vehicle')}
-              >
-                Contact Seller
-              </Button>
-            </div>
-          </Paper>
-        </Grow>
-      </Container>
+          <Dialog open={reviewOpen} onClose={() => setReviewOpen(false)}>
+            <ReviewModal onClose={() => setReviewOpen(false)} onSubmit={handleSubmitReview} />
+          </Dialog>
+
+
+          {/* Reviews Section */}
+          <Box>
+            {reviews.length > 0 && (
+              <Box sx={{ marginTop: '40px' }}>
+                <Typography variant="h4" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
+                  Reviews
+                </Typography>
+                <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
+                  {reviews.map((review) => (
+                    <Grid item xs={12} sm={6} md={4} key={review._id}>
+                      <Card
+                        sx={{
+                          padding: '12px',
+                          borderRadius: '10px',
+                          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                          backgroundColor: '#fff',
+                        }}
+                      >
+                        <CardContent sx={{ padding: '12px' }}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#333' }}>
+                            {review.userName + "  " + `${review.rating}⭐`}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', marginBottom: '6px' }}>
+                            {new Date(review.createdAt).toLocaleDateString()}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#555', fontStyle: 'italic' }}>
+                            "{review.comment}"
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))}
+                </Grid>
+              </Box>
+            )}
+
+          </Box>
+        </Container>
+
+      </Box>
     </>
   );
 };

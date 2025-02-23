@@ -1,5 +1,27 @@
 import mongoose from "mongoose";
 
+const reviewSchema = new mongoose.Schema(
+  {
+    userName: {
+      type: String,
+      required: true,
+      default: "Unknown"
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5,
+    },
+    comment: {
+      type: String,
+      required: false,
+    },
+  },
+  { timestamps: true }
+);
+
+
 const productSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -12,11 +34,23 @@ const productSchema = new mongoose.Schema({
   description: {
     type: String,
     required: false,
-    default: ""
+    default: "",
   },
-  price: {
+  priceMin: {
     type: Number,
     required: true,
+    min: [0, "Minimum price cannot be negative."], // Minimum value is 0
+  },
+  priceMax: {
+    type: Number,
+    required: true,
+    validate: {
+      validator: function (value) {
+        // Ensure priceMax is greater than or equal to priceMin
+        return value >= this.priceMin;
+      },
+      message: "Maximum price must be greater than or equal to minimum price.",
+    },
   },
   category: {
     type: String,
@@ -41,8 +75,40 @@ const productSchema = new mongoose.Schema({
         `${props.value} is not a valid subcategory for category ${props.instance.category}`,
     },
   },
+  engineCapacity: {
+    type: Number,
+    required: true,
+  },
+  mileage: {
+    type: Number,
+    required: true,
+  },
+  transmission: {
+    type: String,
+    required: true,
+  },
+  kerbWeight: {
+    type: Number,
+    required: true,
+  },
+  fuelTankCapacity: {
+    type: Number,
+    required: true,
+  },
+  seatHeight: {
+    type: Number,
+    required: true,
+  },
+  reviews: [reviewSchema],
+
+  // Average Rating
+  averageRating: {
+    type: Number,
+    default: 0,
+  },
+
 });
 
-const VehicleModel = mongoose.model('Vehicles', productSchema);
+const VehicleModel = mongoose.model("Vehicles", productSchema);
 
 export default VehicleModel;

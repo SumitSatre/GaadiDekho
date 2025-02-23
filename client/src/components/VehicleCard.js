@@ -64,7 +64,7 @@ const VehicleCard = ({ vehicle }) => {
           color="primary"
           sx={{ fontWeight: "bold", marginTop: 1 }}
         >
-          ₹{vehicle.price}
+          Price Range: ₹{vehicle.priceMin.toLocaleString()} - ₹{vehicle.priceMax.toLocaleString()}
         </Typography>
       </CardContent>
     </Card>

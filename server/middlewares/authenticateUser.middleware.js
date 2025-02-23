@@ -2,7 +2,8 @@ import jwt from "jsonwebtoken";
 import _ from "lodash"; // Assuming you are using lodash
 
 const protect = async (req, res, next) => {
-    let token;
+    try{
+        let token;
 
     // Check for token in Authorization header (Bearer token) or in cookies
     if (!_.isEmpty(req.headers.authorization) && req.headers.authorization.startsWith("Bearer")) {
@@ -21,6 +22,9 @@ const protect = async (req, res, next) => {
 
     // Decode and verify the token
     let decoded;
+
+    // console.log(decoded);
+
     jwt.verify(token, process.env.JWtSecret, (err, result) => {
         if (err) {
             console.error('Error decoding token:', err.message);
@@ -29,7 +33,7 @@ const protect = async (req, res, next) => {
         }
     });
 
-    console.log("This is decode:", decoded);
+   // console.log("This is decode:", decoded);
 
     // Check if decoded token contains necessary user details
     if (!decoded || !decoded.userDetails || !decoded.userDetails.id || !decoded.userDetails.email) {
@@ -56,6 +60,10 @@ const protect = async (req, res, next) => {
 
     // Proceed to the next middleware or route handler
     next();
+    }
+    catch(error){
+        res.status(500).json({success : false, message: error.message });
+    }
 };
 
 export default protect;

@@ -45,6 +45,7 @@ const loginUserController =
             const data = {
                 userDetails: {
                     "id": userData._id,
+                    "name" : userData.name,
                     "email" : email
                 }
             }
