@@ -7,6 +7,7 @@ import { CssBaseline } from '@mui/material'
 
 import { configureStore } from '@reduxjs/toolkit';
 import categorySlice from "./slices/CategorySlice.js";
+import searchSlice from "./slices/SearchBarSlice.js";
 import { Provider } from 'react-redux';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -27,7 +28,8 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const store = configureStore({
   reducer: {
-    category: categorySlice
+    category: categorySlice,
+    search : searchSlice
   }
 })
 

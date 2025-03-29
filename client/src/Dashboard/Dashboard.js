@@ -55,7 +55,7 @@ const AdminPage = () => {
                 >
                   Add Vehicle
                 </ListGroup.Item>
-
+{/*
                 <ListGroup.Item
                   active={activePage === 'users'}
                   onClick={() => handleButtonClick('users')}
@@ -71,7 +71,7 @@ const AdminPage = () => {
                 >
                   Vehicles
                 </ListGroup.Item>
-
+                */}
               </ListGroup>
             </Card>
           </Col>

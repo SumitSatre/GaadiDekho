@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import {
   Card,
@@ -70,27 +70,38 @@ const VehicleCard = ({ vehicle }) => {
     </Card>
   );
 };
-
 const VehicleList = ({ vehicles , loading }) => {
-
+  const searchText = useSelector((state) => state.search.searchText);
   const { category, subcategory } = useSelector((state) => state.category);
 
-  // Filter vehicles based on category and subcategory
+  useEffect(() => {
+    if (searchText) {
+      console.log("Search text changed:", searchText);
+    }
+  }, [searchText]);
+
+  // Convert search text to lowercase for case-insensitive comparison
+  const lowerCaseSearchText = searchText?.toLowerCase() || "";
+
+  // Filter vehicles based on searchText, category, and subcategory
   const filteredVehicles = vehicles.filter((vehicle) => {
     const categoryMatch = category ? vehicle.category === category : true;
     const subcategoryMatch =
       subcategory && subcategory !== "All" ? vehicle.subcategory === subcategory : true;
+    
+    const searchMatch = searchText
+      ? vehicle.name.toLowerCase().includes(lowerCaseSearchText) // Modify to match relevant field
+      : true;
 
-    return categoryMatch && subcategoryMatch;
+    return categoryMatch && subcategoryMatch && searchMatch;
   });
 
-
   if (loading) {
-    return <LoadingSpinner />; // Use the loading spinner component
+    return <LoadingSpinner />;
   }
-  
+
   return (
-    <Box sx={{ marginTop: 3, padding: 2 }} >
+    <Box sx={{ marginTop: 3, padding: 2 }}>
       <Grid container spacing={2}>
         {filteredVehicles.length > 0 ? (
           filteredVehicles.map((vehicle) => (
@@ -105,7 +116,7 @@ const VehicleList = ({ vehicles , loading }) => {
             align="center"
             sx={{ width: "100%", marginTop: 3 }}
           >
-            No vehicles found for the selected category and subcategory.
+            No vehicles found for the selected category, subcategory, or search text.
           </Typography>
         )}
       </Grid>

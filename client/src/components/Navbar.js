@@ -21,7 +21,9 @@ import {
 import { Search as SearchIcon, AccountCircle, MoreVert as MoreVertIcon, Menu as MenuIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import AuthToken from '../helper/AuthToken';
-import logo from "../images/Logo.jpg";
+import logo from "../images/gaadi_dekho_website_logo.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { SET_SEARCH_TEXT, CLEAR_SEARCH_TEXT } from "../slices/SearchBarSlice.js";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -33,6 +35,10 @@ const Navbar = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
+
+  const dispatch = useDispatch();
+  const searchText = useSelector((state) => state.search.searchText);
+
 
   const toggleSearch = () => {
     setShowSearch(!showSearch);
@@ -61,7 +67,7 @@ const Navbar = () => {
   };
 
   const handleHomeClick = () => {
-    navigate("/"); 
+    navigate("/");
   };
 
   const handleAboutClick = () => {
@@ -69,7 +75,7 @@ const Navbar = () => {
   };
 
   const handleDashboardClick = () => {
-    navigate("/dashboard"); 
+    navigate("/dashboard");
   };
 
   const UserEmail = AuthToken.getEmail();
@@ -88,13 +94,13 @@ const Navbar = () => {
       const response = await fetch('http://localhost:5000/api/v1/user/info', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`, 
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
 
       // Await response.json() to correctly handle the JSON body
-      const responseData = await response.json(); 
+      const responseData = await response.json();
 
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
@@ -120,12 +126,12 @@ const Navbar = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Avatar
               alt="Logo"
-              src={logo} 
+              src={logo}
               sx={{
                 width: isMobile ? 40 : 60,
                 height: isMobile ? 40 : 60,
                 border: '2px solid white',
-                borderRadius: 0, 
+                borderRadius: 0,
                 marginRight: 1,
               }}
             />
@@ -161,9 +167,20 @@ const Navbar = () => {
 
                 {showSearch && (
                   <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: 'white', borderRadius: 2, padding: '5px 10px', width: '200px' }}>
-                    <InputBase placeholder="Search..." sx={{ flex: 1, fontSize: '14px' }} />
+                    <InputBase
+                      placeholder="Search..."
+                      sx={{ flex: 1, fontSize: '14px' }}
+                      value={searchText} // Bind to Redux state
+                      onChange={(e) => dispatch(SET_SEARCH_TEXT(e.target.value))} // Dispatch Redux action
+                    />
+                    {searchText && (
+                      <IconButton onClick={() => dispatch(CLEAR_SEARCH_TEXT())}>
+                        ❌
+                      </IconButton>
+                    )}
                   </Box>
                 )}
+
 
                 {AuthToken.isValidToken() ? (
                   <>
