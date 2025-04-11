@@ -31,6 +31,10 @@ app.use((req, res, next) => {
     next();
   });
 
+// dummy Route
+app.get('/' , (req , res)=>{
+  res.send("Your backend is running successfully!");
+})
 
 // Routed Imported 
 
