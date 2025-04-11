@@ -31,7 +31,7 @@ const VehicleInfoPage = () => {
 
       // console.log(`http://localhost:5000/api/v1/add/review/${vehicle._id}`);
 
-      const response = await fetch(`http://localhost:5000/api/v1/add/review/${vehicle._id}`, {
+      const response = await fetch(`http://localhost:4001/api/v1/add/review/${vehicle._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

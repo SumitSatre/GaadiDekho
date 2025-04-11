@@ -91,7 +91,7 @@ const Navbar = () => {
     setLoading(true);
     setErrorMessage('');
     try {
-      const response = await fetch('http://localhost:5000/api/v1/user/info', {
+      const response = await fetch(`http://localhost:4001/api/v1/user/info`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
