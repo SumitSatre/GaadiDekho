@@ -23,7 +23,7 @@ const ReviewModal = ({ onClose, onSubmit }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:4001/api/v1/add/review`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKENDURL}/api/v1/add/review`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(review)

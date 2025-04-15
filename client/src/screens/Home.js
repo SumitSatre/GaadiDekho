@@ -11,8 +11,8 @@ const Home = () => {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        // console.log("This is Backend URL : " , `http://localhost:4001/api/v1/get/vehicles`);
-        const response = await fetch(`http://localhost:4001/api/v1/get/vehicles`);
+         console.log("This is Backend URL : " , `${process.env.REACT_APP_BACKENDURL}/api/v1/get/vehicles`);
+        const response = await fetch(`${process.env.REACT_APP_BACKENDURL}/api/v1/get/vehicles`);
         console.log(response);
         if (!response.ok) {
           console.log(`HTTP error! Status: ${response.status}`);
