@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.ce9a0895.css",
-    "main.js": "/static/js/main.ce840c04.js",
+    "main.js": "/static/js/main.91764da0.js",
     "static/media/gaadi_dekho_website_logo.jpg": "/static/media/gaadi_dekho_website_logo.487396bd7ff6c168b06a.jpg",
     "index.html": "/index.html",
     "main.ce9a0895.css.map": "/static/css/main.ce9a0895.css.map",
-    "main.ce840c04.js.map": "/static/js/main.ce840c04.js.map"
+    "main.91764da0.js.map": "/static/js/main.91764da0.js.map"
   },
   "entrypoints": [
     "static/css/main.ce9a0895.css",
-    "static/js/main.ce840c04.js"
+    "static/js/main.91764da0.js"
   ]
 }
